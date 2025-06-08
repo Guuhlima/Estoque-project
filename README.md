@@ -37,7 +37,7 @@ CREATE TABLE equipamentos (
 CREATE TABLE usuarios (
 	ID SERIAL PRIMARY KEY,
 	Nome VARCHAR(255) NULL,
-	Matricula INT(255) NULL,
+	Matricula INT NULL,
 	Email VARCHAR(255) NULL
 	Senha VARCHAR(255) NULL
 )
