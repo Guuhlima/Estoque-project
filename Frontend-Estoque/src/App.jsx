@@ -5,13 +5,14 @@ import Home from './pages/Home'
 import DeleteItem from './pages/DeleteItem';
 import GetItemId from './pages/GetITemID'
 import UpdateItem from './pages/UpdateItem';
-
+import Login from './pages/Login';
 
 const app = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home/>} />
+        <Route path="/" element={<Login/>}/>
+        <Route path="/Home" element={<Home/>} />
         <Route path="/CreateItem" element={<CreateItem/>} />
         <Route path="/DeleteItem" element={<DeleteItem/>} />
         <Route path="/GetItemId" element={<GetItemId/>} />
