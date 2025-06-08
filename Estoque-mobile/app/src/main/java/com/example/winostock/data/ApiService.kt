@@ -1,6 +1,7 @@
 package com.example.winostock.data
 
 import com.example.winostock.models.Equipamento
+import com.example.winostock.models.Usuarios
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -26,6 +27,20 @@ object ApiService {
         } catch (e: Exception) {
             e.printStackTrace()
             println("Erro ao cadastrar: ${e.localizedMessage}")
+            false
+        }
+    }
+
+    suspend fun loginUsuario(usuario: Usuarios): Boolean {
+        return try {
+            val response = client.post("http://10.0.2.2:4000/user/login") {
+                contentType(ContentType.Application.Json)
+                setBody(usuario)
+            }
+            response.status.value in 200..299
+        } catch (e: Exception) {
+            e.printStackTrace()
+            println("Erro ao realizar login: ${e.localizedMessage}")
             false
         }
     }
