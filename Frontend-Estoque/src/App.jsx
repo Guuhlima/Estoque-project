@@ -4,6 +4,7 @@ import CreateItem from './pages/CreateItem';
 import Home from './pages/Home'
 import DeleteItem from './pages/DeleteItem';
 import GetItemId from './pages/GetITemID'
+import UpdateItem from './pages/UpdateItem';
 
 
 const app = () => {
@@ -14,6 +15,7 @@ const app = () => {
         <Route path="/CreateItem" element={<CreateItem/>} />
         <Route path="/DeleteItem" element={<DeleteItem/>} />
         <Route path="/GetItemId" element={<GetItemId/>} />
+        <Route path="/UpdateItem" element={<UpdateItem/>} />
       </Routes>
     </Router>
   )

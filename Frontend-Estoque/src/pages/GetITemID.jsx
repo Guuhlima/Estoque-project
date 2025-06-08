@@ -11,12 +11,12 @@ const GetItemId = () => {
         try {
             const response = await api.get(`/visualizar/${idItem}`);
             setEquipamento(response.data);
-            alert('Sucesso ao buscar informações')
         } catch (error) {
             console.error('Erro ao consultar informações', error)
             alert('Erro ao buscar item');
         }
     }
+
     return (
         <div>
             <form onSubmit={handleGet}>

@@ -24,6 +24,8 @@ object ApiService {
             }
             response.status.value in 200..299
         } catch (e: Exception) {
+            e.printStackTrace()
+            println("Erro ao cadastrar: ${e.localizedMessage}")
             false
         }
     }

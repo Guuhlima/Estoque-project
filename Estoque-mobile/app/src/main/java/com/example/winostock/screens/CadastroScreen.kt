@@ -1,21 +1,21 @@
 package com.example.winostock.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.winostock.data.ApiService
 import com.example.winostock.models.Equipamento
-import io.ktor.websocket.Frame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.compose.material3.Text
 
 @Composable
-fun CadastroScreen() {
+fun CadastroScreen(navController: NavHostController) {
     var equipamento by remember { mutableStateOf("") }
     var quantidade by remember { mutableStateOf("") }
     var data by remember { mutableStateOf("") }
@@ -35,22 +35,19 @@ fun CadastroScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
+            println("Enviando: equipamento=$equipamento, quantidade=$quantidade, data=$data")
             CoroutineScope(Dispatchers.IO).launch {
                 val sucesso = ApiService.cadastrarEquipamento(
                     Equipamento(equipamento, quantidade, data)
                 )
+                println("Resultado da API: $sucesso")
                 mensagem = if (sucesso) "Cadastro realizado!" else "Erro no cadastro"
             }
         }) {
-            Frame.Text("Cadastrar")
+            Text("Cadastrar")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Frame.Text(mensagem)
+        Text(mensagem)
     }
-}
-
-@Composable
-fun Text(s: String) {
-
 }
