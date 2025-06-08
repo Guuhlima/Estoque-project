@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.example.winostock.screens.CadastroScreen
 import com.example.winostock.screens.LoginScreen
 import com.example.winostock.screens.DashboardScreen
+import com.example.winostock.screens.EditarScreen
 import com.example.winostock.screens.VisualizarScreen
 
 @Composable
@@ -16,6 +17,12 @@ fun AppNavigation(navController: NavHostController) {
         composable("login") { LoginScreen(navController) }
         composable("dashboard") { DashboardScreen(navController)}
         composable("visualizar") { VisualizarScreen(navController)}
+        composable("editar/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+            id?.let {
+                EditarScreen(navController, it)
+            }
+        }
     }
 }
 

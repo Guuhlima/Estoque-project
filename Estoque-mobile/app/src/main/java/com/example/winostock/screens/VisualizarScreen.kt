@@ -81,6 +81,14 @@ fun VisualizarScreen(navController: NavController) {
                             }) {
                                 Text("Deletar")
                             }
+
+                            Button(onClick = {
+                                equipamento.id?.let {id ->
+                                    navController.navigate("editar/$id")
+                                }
+                            }) {
+                                Text("Editar")
+                            }
                         }
                     }
                 }

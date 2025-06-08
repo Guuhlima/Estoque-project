@@ -51,6 +51,19 @@ object ApiService {
         }
     }
 
+    suspend fun editarEquipamento(equipamento: Equipamento): Boolean {
+        return try {
+            val response = client.put("http://10.0.2.2:4000/editar/${equipamento.id}") {
+                contentType(ContentType.Application.Json)
+                setBody(equipamento)
+            }
+            response.status.value in 200..299
+        } catch (e: Exception) {
+            println("Erro ao editar equipamento: ${e.localizedMessage}")
+            false
+        }
+    }
+
     //ABAIXO APIS DE USUARIOS
 
     suspend fun loginUsuario(usuario: Usuarios): Boolean {
