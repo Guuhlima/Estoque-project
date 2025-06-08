@@ -13,41 +13,63 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
+import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginScreen (navController: NavController) {
+fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
-    var matricula by remember { mutableStateOf("") }
-    //nome by remember { mutableStateOf("") }
     var mensagem by remember { mutableStateOf("") }
 
-
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
-        TextField(value = email, onValueChange = { email = it }, label = { Text("Email")})
-        Spacer(modifier = Modifier.height(8.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            TextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        TextField(value = senha, onValueChange = { senha = it}, label = { Text("Senha")})
-        Spacer(modifier = Modifier.height(8.dp))
+            TextField(
+                value = senha,
+                onValueChange = { senha = it },
+                label = { Text("Senha") }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
-            println("Enviando: login=$email, senha=$senha")
-            CoroutineScope(Dispatchers.IO).launch {
-                val sucesso = ApiService.loginUsuario(
-                    Usuarios(email = email, senha = senha)
-                )
-                println("Resultado da API: $sucesso")
-                mensagem = if (sucesso) "Login realizado" else "Erro ao logar"
+            Button(onClick = {
+                println("Enviando: login=$email, senha=$senha")
+                CoroutineScope(Dispatchers.IO).launch {
+                    val sucesso = ApiService.loginUsuario(
+                        Usuarios(email = email, senha = senha)
+                    )
+                    println("Resultado da API: $sucesso")
+
+                    withContext(Dispatchers.Main) {
+                        if (sucesso) {
+                            mensagem = "Login realizado"
+                            navController.navigate("dashboard")
+                        } else {
+                            mensagem = "Erro ao logar"
+                        }
+                    }
+                }
+            }) {
+                Text("Entrar")
             }
-        }) {
-            Text("Entrar")
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(mensagem)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(mensagem)
+        }
     }
 }

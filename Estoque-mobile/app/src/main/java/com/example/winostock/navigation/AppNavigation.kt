@@ -6,13 +6,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.winostock.screens.CadastroScreen
 import com.example.winostock.screens.LoginScreen
+import com.example.winostock.screens.DashboardScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "login") {
         composable("cadastro") { CadastroScreen(navController) }
         composable("login") { LoginScreen(navController) }
-        // etc.
+        composable("dashboard") { DashboardScreen(navController)}
     }
 }
 

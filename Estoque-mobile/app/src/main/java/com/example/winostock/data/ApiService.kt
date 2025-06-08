@@ -31,6 +31,22 @@ object ApiService {
         }
     }
 
+    suspend fun visualizarEquipamento(equipamento: Equipamento): Boolean {
+        return try {
+            val response = client.get("http://10.0.2.2:4000/visualizar") {
+                contentType(ContentType.Application.Json)
+                setBody(equipamento)
+            }
+            response.status.value in 200..299
+        } catch (e: Exception) {
+            e.printStackTrace()
+            println("Erro ao buscar informações ${e.localizedMessage}")
+            false
+        }
+    }
+
+    //ABAIXO APIS DE USUARIOS
+
     suspend fun loginUsuario(usuario: Usuarios): Boolean {
         return try {
             val response = client.post("http://10.0.2.2:4000/user/login") {
