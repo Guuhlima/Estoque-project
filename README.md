@@ -8,7 +8,8 @@ Sistema completo de controle de estoque com **Frontend (React.js)**, **Backend (
 ## 📸 Preview
 
 > _Adicione prints de tela dos principais módulos (opcional)_  
-> ![Web Screenshot](./screenshots/web.png)  
+> ![Web Screenshot](![image](https://github.com/user-attachments/assets/dc089144-6ffe-40f2-ac18-2732db33d765)
+)  
 > ![Mobile Screenshot](./screenshots/mobile.png)
 
 ---
