@@ -1,6 +1,6 @@
 # 📦 Estoque
 
-Sistema de controle de estoque completo com **Frontend (React)**, **Backend (Node.js + Express)** e **Mobile (Android/Kotlin Multiplatform)**. Utiliza **PostgreSQL** como banco de dados e foi desenvolvido com foco em uma vaga Full Stack com integração completa entre web e mobile.
+Sistema de controle de estoque completo com **Frontend (React)**, **Backend (Node.js + Express)** e **Mobile (Android/Kotlin Multiplatform)**. Utiliza **PostgreSQL** como banco de dados.
 
 ---
 
