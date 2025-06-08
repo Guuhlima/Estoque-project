@@ -3,6 +3,7 @@ package com.example.winostock.data
 import com.example.winostock.models.Equipamento
 import com.example.winostock.models.Usuarios
 import io.ktor.client.*
+import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -31,16 +32,21 @@ object ApiService {
         }
     }
 
-    suspend fun visualizarEquipamento(equipamento: Equipamento): Boolean {
+    suspend fun visualizarEquipamento(): List<Equipamento> {
         return try {
-            val response = client.get("http://10.0.2.2:4000/visualizar") {
-                contentType(ContentType.Application.Json)
-                setBody(equipamento)
-            }
+            client.get("http://10.0.2.2:4000/visualizar").body()
+        } catch (e: Exception) {
+            println("Erro ao buscar informações ${e.localizedMessage}")
+            emptyList()
+        }
+    }
+
+    suspend fun deletarEquipamento(id: Int): Boolean {
+        return try {
+            val response = client.delete("http://10.0.2.2:4000/deletar/$id")
             response.status.value in 200..299
         } catch (e: Exception) {
-            e.printStackTrace()
-            println("Erro ao buscar informações ${e.localizedMessage}")
+            println("Erro ao deletar equipamento: ${e.localizedMessage}")
             false
         }
     }

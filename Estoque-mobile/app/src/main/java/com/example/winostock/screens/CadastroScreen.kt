@@ -68,7 +68,11 @@ fun CadastroScreen(navController: NavHostController) {
                     println("Enviando: equipamento=$equipamento, quantidade=$quantidade, data=$data")
                     CoroutineScope(Dispatchers.IO).launch {
                         val sucesso = ApiService.cadastrarEquipamento(
-                            Equipamento(equipamento, quantidade, data)
+                            Equipamento(
+                                equipamento = equipamento,
+                                quantidade = quantidade.toIntOrNull() ?: 0,
+                                data = data
+                            )
                         )
                         println("Resultado da API: $sucesso")
                         mensagem = if (sucesso) "Cadastro realizado!" else "Erro no cadastro"

@@ -31,6 +31,12 @@ fun DashboardScreen(navController: NavController) {
             ) {
                 Text("Cadastrar Item")
             }
+
+            Button(
+                onClick = { navController.navigate("visualizar")}
+            ) {
+                Text("Visualizar Items")
+            }
         }
     }
 }
