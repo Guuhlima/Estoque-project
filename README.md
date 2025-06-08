@@ -46,5 +46,5 @@ CREATE TABLE usuarios (
 
 ### 1. Clonar o repositório
 ```bash
-git clone https://github.com/SEU-USUARIO/Estoque-project.git
+git clone https://github.com/Guuhlima/Estoque-project.git
 cd Estoque-project
