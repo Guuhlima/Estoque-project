@@ -3,6 +3,37 @@ import pool from '../config/db.js'
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Equipamentos
+ *   description: API para gerenciamento de equipamentos
+ */
+
+/**
+ * @swagger
+ * /cadastro:
+ *   post:
+ *     summary: Cadastrar novo equipamento
+ *     tags: [Equipamentos]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               equipamento:
+ *                 type: string
+ *               quantidade:
+ *                 type: integer
+ *               data:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Equipamento criado com sucesso
+ */
 router.post('/cadastro', async (req, res) => {
     try {
         const { equipamento, quantidade, data } = req.body;
@@ -19,6 +50,16 @@ router.post('/cadastro', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /visualizar:
+ *   get:
+ *     summary: Visualizar todos os equipamentos
+ *     tags: [Equipamentos]
+ *     responses:
+ *       200:
+ *         description: Lista de equipamentos
+ */
 router.get('/visualizar', async(req, res) => {
     try {
         const getItem = await pool.query(
@@ -32,6 +73,24 @@ router.get('/visualizar', async(req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /visualizar/{id}:
+ *   get:
+ *     summary: Visualizar um equipamento por ID
+ *     tags: [Equipamentos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Equipamento encontrado
+ *       401:
+ *         description: Equipamento não encontrado
+ */
 router.get('/visualizar/:id', async(req,res) => {
     try {
         const {id} = req.params
@@ -52,6 +111,38 @@ router.get('/visualizar/:id', async(req,res) => {
     }
 });
 
+/**
+ * @swagger
+ * /editar/{id}:
+ *   put:
+ *     summary: Editar um equipamento existente
+ *     tags: [Equipamentos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               equipamento:
+ *                 type: string
+ *               quantidade:
+ *                 type: integer
+ *               data:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Equipamento atualizado
+ *       401:
+ *         description: Equipamento não encontrado
+ */
 router.put('/editar/:id', async(req, res) => {
     try {
         const { id } = req.params;
@@ -74,6 +165,22 @@ router.put('/editar/:id', async(req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /deletar/{id}:
+ *   delete:
+ *     summary: Deletar um equipamento
+ *     tags: [Equipamentos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Equipamento deletado
+ */
 router.delete('/deletar/:id', async(req, res) => {
     try {
         const {id} = req.params;

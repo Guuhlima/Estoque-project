@@ -4,6 +4,38 @@ import bcrypt from 'bcrypt'
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /cadastro:
+ *   post:
+ *     summary: Cadastra um novo usuário
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nome
+ *               - email
+ *               - matricula
+ *               - senha
+ *             properties:
+ *               nome:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               matricula:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Usuário cadastrado com sucesso
+ *       500:
+ *         description: Erro ao realizar cadastro de usuário
+ */
 router.post('/cadastro', async(req, res) => {
     try {
         const { nome , email, matricula, senha } = req.body;
@@ -23,6 +55,32 @@ router.post('/cadastro', async(req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Realiza o login de um usuário
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - senha
+ *             properties:
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso
+ *       401:
+ *         description: Usuário não encontrado ou senha incorreta
+ */
 router.post('/login', async(req, res) => {
     try {
         const { email, senha } = req.body;
