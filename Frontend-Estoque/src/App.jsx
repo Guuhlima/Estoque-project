@@ -1,25 +1,26 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CreateItem from './pages/CreateItem';
-import Home from './pages/Home'
+import Home from './pages/Home';
 import DeleteItem from './pages/DeleteItem';
-import GetItemId from './pages/GetITemID'
+import GetItemId from './pages/GetItemId';
 import UpdateItem from './pages/UpdateItem';
 import Login from './pages/Login';
+import ProtectedRoute from './pages/ProtectedRoute';
 
-const app = () => {
+const App = () => {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login/>}/>
-        <Route path="/Home" element={<Home/>} />
-        <Route path="/CreateItem" element={<CreateItem/>} />
-        <Route path="/DeleteItem" element={<DeleteItem/>} />
-        <Route path="/GetItemId" element={<GetItemId/>} />
-        <Route path="/UpdateItem" element={<UpdateItem/>} />
+        <Route path="/" element={<Login />} />
+        <Route path="/Home" element={<ProtectedRoute><Home/></ProtectedRoute>} />
+        <Route path="/CreateItem" element={<ProtectedRoute><CreateItem/></ProtectedRoute>} />
+        <Route path="/DeleteItem" element={<ProtectedRoute><DeleteItem/></ProtectedRoute>} />
+        <Route path="/GetItemId" element={<ProtectedRoute><GetItemId/></ProtectedRoute>} />
+        <Route path="/UpdateItem" element={<ProtectedRoute><UpdateItem/></ProtectedRoute>} />
       </Routes>
-    </Router>
-  )
-}
+    </BrowserRouter>
+  );
+};
 
-export default app;
+export default App;

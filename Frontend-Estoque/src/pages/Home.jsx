@@ -8,7 +8,7 @@ const Home = () => {
 
     const handleLogout = (e) => {
         e.preventDefault();
-        localStorage.removeItem('token');
+        localStorage.removeItem('auth');
         navigate('/')
     }
     

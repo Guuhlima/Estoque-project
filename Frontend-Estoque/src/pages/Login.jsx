@@ -9,9 +9,10 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+        
         try {
             await api.post('/user/login', {email,senha});
+            localStorage.setItem('auth', 'true')
             navigate('/Home');
         } catch (error) {
             console.error('Erro ao realizar login:', error);
