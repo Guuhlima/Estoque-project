@@ -12,7 +12,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /cadastro:
+ * /equipamentos/cadastro:
  *   post:
  *     summary: Cadastrar novo equipamento
  *     tags: [Equipamentos]
