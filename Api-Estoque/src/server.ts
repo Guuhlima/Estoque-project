@@ -3,6 +3,7 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { equipamentosRoutes } from './routes/equipamentosRoutes';
 import { usuariosRoutes } from './routes/usuariosRoutes';
 import { historicoRoutes } from './routes/historicoRoutes';
+import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,6 +11,10 @@ dotenv.config();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 
 const app = Fastify().withTypeProvider<TypeBoxTypeProvider>();
+
+await app.register(cors, {
+  origin: 'http://localhost:3000',
+});
 
 app.register(equipamentosRoutes);
 app.register(usuariosRoutes);

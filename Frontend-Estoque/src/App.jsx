@@ -1,11 +1,10 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CreateItem from './pages/CreateItem';
 import Home from './pages/Home';
 import DeleteItem from './pages/DeleteItem';
 import GetItemId from './pages/GetItemId';
 import UpdateItem from './pages/UpdateItem';
-import Login from './pages/Login';
+import Login from './pages';
 import ProtectedRoute from './pages/ProtectedRoute';
 
 const App = () => {
