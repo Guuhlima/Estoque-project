@@ -4,7 +4,7 @@ import { Static } from '@sinclair/typebox';
 import pool from '../config/db';
 
 type Body = Static<typeof HistoricoBodySchema>
-type Params = Static<typeof HistoricoParamsSchema>
+//type Params = Static<typeof HistoricoParamsSchema>
 
 export async function cadastroHistorico(req: FastifyRequest<{Body: Body}>, reply: FastifyReply) {
     try {

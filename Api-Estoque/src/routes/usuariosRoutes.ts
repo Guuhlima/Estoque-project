@@ -14,7 +14,7 @@ import { UsuarioBodySchema, UsuarioParamsSchema, UsuarioLoginSchema } from "../s
 export async function usuariosRoutes(app: FastifyInstance) {
     app.post('/user/cadastro', {
         schema: { body: UsuarioBodySchema },
-        handler: cadastrarUsuarios 
+        handler: cadastrarUsuarios
     });
 
     app.get('/user/visualizar', visualizarUsuarios)

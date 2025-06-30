@@ -3,6 +3,8 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { equipamentosRoutes } from './routes/equipamentosRoutes';
 import { usuariosRoutes } from './routes/usuariosRoutes';
 import { historicoRoutes } from './routes/historicoRoutes';
+import { transferenciasRoutes } from './routes/transferenciasRoutes';
+import { estoquesRoutes } from 'routes/estoquesRoutes';
 import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 
@@ -19,6 +21,8 @@ await app.register(cors, {
 app.register(equipamentosRoutes);
 app.register(usuariosRoutes);
 app.register(historicoRoutes);
+app.register(transferenciasRoutes);
+app.register(estoquesRoutes);
 
 app.listen({ port: PORT }, (err, address) => {
   if (err) {

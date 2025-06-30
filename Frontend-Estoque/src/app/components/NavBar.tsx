@@ -16,6 +16,7 @@ const NavBar = ({ onLogout }: NavBarProps) => {
         <Link href="/delete" className="hover:underline text-white">Deletar</Link>
         <Link href="/get" className="hover:underline text-white">Consultar</Link>
         <Link href="/update" className="hover:underline text-white">Editar</Link>
+        <Link href="/transfer" className="hover:underline text-white">Transferências</Link>
         <a href="#" onClick={onLogout} className="hover:underline text-red-400">Sair</a>
       </div>
     </nav>

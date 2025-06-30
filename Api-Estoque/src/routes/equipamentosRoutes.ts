@@ -1,16 +1,16 @@
 import { FastifyInstance } from "fastify";
-import { 
-    cadastrarEquipamento, 
-    editarEquipamento, 
-    visualizarEquipamentos, 
+import {
+    cadastrarEquipamento,
+    editarEquipamento,
+    visualizarEquipamentos,
     visualizarEquipamentosPorId,
-    deletarEquipamento 
+    deletarEquipamento
 } from "../controllers/equipamentosController";
 
 import { EquipamentoBodySchema, EquipamentoParamsSchema } from "../schemas/equipamentosSchemas";
 
 export async function equipamentosRoutes(app: FastifyInstance) {
-    app.post('/equipamentos/cadastro', {
+    app.post('/cadastro', {
         schema: { body: EquipamentoBodySchema },
         handler:  cadastrarEquipamento
     });
