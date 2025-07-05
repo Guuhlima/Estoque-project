@@ -8,19 +8,19 @@ import {
 import { TransferenciaBodySchema, TransferenciaParamsSchema } from '../schemas/transferenciasSchema';
 
 export async function transferenciasRoutes(app: FastifyInstance) {
-    app.post('/transfer/transferencias', {
+    app.post('/transfer/cadastro', {
         schema: { body: TransferenciaBodySchema },
         handler: realizarTransferencia
     });
 
-    app.get('/transfer/transferencias', visualizarTransferencias);
+    app.get('/transfer/visualizar', visualizarTransferencias);
 
-    app.get('/transfer/transferencias/:id', {
+    app.get('/transfer/visualizar/:id', {
         schema: { params: TransferenciaParamsSchema },
         handler: visualizarTransferenciaPorId
     });
 
-    app.delete('/transfer/transferencias/:id', {
+    app.delete('/transfer/deletar/:id', {
         schema: { params: TransferenciaParamsSchema },
         handler: deletarTransferencia
     });

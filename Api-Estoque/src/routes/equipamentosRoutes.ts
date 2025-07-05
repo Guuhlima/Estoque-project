@@ -10,24 +10,24 @@ import {
 import { EquipamentoBodySchema, EquipamentoParamsSchema } from "../schemas/equipamentosSchemas";
 
 export async function equipamentosRoutes(app: FastifyInstance) {
-    app.post('/cadastro', {
+    app.post('/equipment/cadastro', {
         schema: { body: EquipamentoBodySchema },
         handler:  cadastrarEquipamento
     });
 
-    app.get('/visualizar',  visualizarEquipamentos );
+    app.get('/equipment/visualizar',  visualizarEquipamentos );
 
-    app.get('/visualizar/:id', {
+    app.get('/equipment/visualizar/:id', {
         schema: { params: EquipamentoParamsSchema },
         handler: visualizarEquipamentosPorId
     })
 
-    app.put('/editar/:id', {
+    app.put('/equipment/editar/:id', {
         schema: {params: EquipamentoParamsSchema, body: EquipamentoBodySchema},
         handler: editarEquipamento
     })
 
-    app.delete('/deletar/:id', {
+    app.delete('/equipment/deletar/:id', {
         schema: { params: EquipamentoParamsSchema },
         handler: deletarEquipamento
     });

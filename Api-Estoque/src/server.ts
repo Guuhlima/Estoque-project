@@ -5,6 +5,7 @@ import { usuariosRoutes } from './routes/usuariosRoutes';
 import { historicoRoutes } from './routes/historicoRoutes';
 import { transferenciasRoutes } from './routes/transferenciasRoutes';
 import { estoquesRoutes } from 'routes/estoquesRoutes';
+import { estoqueItensRoutes } from 'routes/estoqueItensRoutes';
 import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 
@@ -23,6 +24,7 @@ app.register(usuariosRoutes);
 app.register(historicoRoutes);
 app.register(transferenciasRoutes);
 app.register(estoquesRoutes);
+app.register(estoqueItensRoutes);
 
 app.listen({ port: PORT }, (err, address) => {
   if (err) {

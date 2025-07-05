@@ -2,11 +2,7 @@ import { prisma } from '../lib/prisma';
 export async function cadastrarEstoque(req, reply) {
     try {
         const { nome } = req.body;
-        const novoEstoque = await prisma.estoque.create({
-            data: {
-                nome,
-            },
-        });
+        const novoEstoque = await prisma.estoque.create({ data: { nome } });
         reply.send(novoEstoque);
     }
     catch (error) {
@@ -27,12 +23,9 @@ export async function visualizarEstoque(_, reply) {
 export async function visualizarEstoquePorId(req, reply) {
     try {
         const { id } = req.params;
-        const estoque = await prisma.estoque.findUnique({
-            where: { id: parseInt(id) },
-        });
+        const estoque = await prisma.estoque.findUnique({ where: { id: parseInt(id) } });
         if (!estoque) {
-            reply.status(404).send({ error: 'Estoque não encontrado' });
-            return;
+            return reply.status(404).send({ error: 'Estoque não encontrado' });
         }
         reply.send(estoque);
     }
@@ -47,9 +40,7 @@ export async function editarEstoque(req, reply) {
         const { nome } = req.body;
         const editarEstoque = await prisma.estoque.update({
             where: { id: parseInt(id) },
-            data: {
-                nome
-            },
+            data: { nome },
         });
         reply.send(editarEstoque);
     }
@@ -74,5 +65,27 @@ export async function deletarEstoque(req, reply) {
             reply.status(500).send({ error: 'Erro ao deletar estoque' });
             console.error(error);
         }
+    }
+}
+export async function visualizarItensPorEstoque(req, reply) {
+    try {
+        const { id } = req.params;
+        const estoque = await prisma.estoque.findUnique({
+            where: { id: parseInt(id) },
+            include: {
+                itens: {
+                    include: {
+                        item: true
+                    }
+                }
+            }
+        });
+        if (!estoque)
+            return reply.status(404).send({ error: 'Estoque não encontrado' });
+        reply.send(estoque.itens);
+    }
+    catch (error) {
+        reply.status(500).send({ error: 'Erro ao buscar itens do estoque' });
+        console.error(error);
     }
 }

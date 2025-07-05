@@ -30,8 +30,8 @@ export async function login(req, reply) {
         const user = await prisma.usuario.findUnique({
             where: { email },
         });
-        if (!user) {
-            return reply.status(404).send({ error: 'Usuário não encontrado' });
+        if (!user || !user.senha) {
+            return reply.status(400).send({ error: 'Usuário ou senha inválidos' });
         }
         const isValid = await bcrypt.compare(senha, user.senha);
         if (!isValid) {

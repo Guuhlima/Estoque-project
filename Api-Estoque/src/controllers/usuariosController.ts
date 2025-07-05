@@ -41,11 +41,12 @@ export async function login(req: FastifyRequest<{ Body: Static<typeof UsuarioLog
       where: { email },
     });
 
-    if (!user) {
-      return reply.status(404).send({ error: 'Usuário não encontrado' });
+    if (!user || !user.senha) {
+      return reply.status(400).send({ error: 'Usuário ou senha inválidos' });
     }
 
     const isValid = await bcrypt.compare(senha, user.senha);
+
     if (!isValid) {
       return reply.status(401).send({ error: 'Senha incorreta' });
     }
