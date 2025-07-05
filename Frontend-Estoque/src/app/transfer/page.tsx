@@ -8,9 +8,10 @@ import Sidebar from '../components/Sidebar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Boxes, PlusCircle, Repeat, ArrowLeftCircle } from 'lucide-react';
+import withAuth from 'app/components/withAuth';
 import { motion } from 'framer-motion';
 
-export default function TransferDashboardPage() {
+const TransferDashboardPage = () => {
   const [view, setView] = useState<'inicio' | 'criarEstoque' | 'listarEstoques' | 'novaTransferencia'>('inicio');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -118,3 +119,5 @@ export default function TransferDashboardPage() {
     </div>
   );
 }
+
+export default withAuth(TransferDashboardPage)

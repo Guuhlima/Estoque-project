@@ -1,20 +1,24 @@
+// src/components/withAuth.tsx
 'use client';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import React from 'react';
 
-export default function withAuth<P extends Record<string, unknown>>(Component: React.ComponentType<P>) {
-  return function ProtectedRoute(props: P) {
+const withAuth = (WrappedComponent: React.ComponentType) => {
+  return function ProtectedRoute(props: any) {
     const router = useRouter();
+    const isAuthenticated = typeof window !== 'undefined' && !!localStorage.getItem('auth');
 
     useEffect(() => {
-      const isAuthenticated = localStorage.getItem('auth') === 'true';
       if (!isAuthenticated) {
         router.push('/');
       }
-    }, [router]);
+    }, [isAuthenticated, router]);
 
-    return <Component {...props} />;
+    if (!isAuthenticated) return null;
+
+    return <WrappedComponent {...props} />;
   };
-}
+};
+
+export default withAuth;
