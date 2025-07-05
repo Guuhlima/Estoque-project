@@ -8,3 +8,8 @@ export const EstoqueItemBodySchema = Type.Object({
 export const EstoqueItemParamsSchema = Type.Object({
   id: Type.String()
 });
+
+export const EstoqueItemQuantidadeParamsSchema = Type.Object({
+  estoqueId: Type.String(),
+  itemId: Type.String(),
+});

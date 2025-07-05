@@ -26,7 +26,7 @@ const TableEquipamentos = ({ data }: TableEquipamentosProps) => {
     const timer = setTimeout(() => {
       setVisibleData(data);
       setLoading(false);
-    }, 2000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [data]);

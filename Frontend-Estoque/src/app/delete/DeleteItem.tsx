@@ -21,7 +21,7 @@ const DeleteItem = () => {
 
   const onSubmit = async (data: DeleteFormData) => {
     try {
-      await api.delete(`/deletar/${data.id}`);
+      await api.delete(`/equipment/deletar/${data.id}`);
       setMessage("Equipamento deletado com sucesso!");
       setTimeout(() => router.push('/home'), 2000);
     } catch (err) {

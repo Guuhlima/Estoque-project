@@ -18,7 +18,7 @@ const GetItemById = () => {
 
   const onSubmit = async (data: GetFormData) => {
     try {
-      const response = await api.get(`/visualizar/${data.id}`);
+      const response = await api.get(`/equipment/visualizar/${data.id}`);
       setItem(response.data);
     } catch (err) {
       console.error(err);

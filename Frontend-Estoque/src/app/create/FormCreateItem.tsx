@@ -27,7 +27,7 @@ const FormCreateItem = () => {
 
   const onSubmit = async (data: ItemFormData) => {
     try {
-      await api.post('/cadastro', data);
+      await api.post('/equipment/cadastro', data);
 
       MySwal.fire({
         icon: 'success',

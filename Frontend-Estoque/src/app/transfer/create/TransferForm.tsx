@@ -11,18 +11,26 @@ interface Estoque {
   nome: string;
 }
 
+interface Equipamento {
+  id: number;
+  nome: string;
+}
+
 export default function TransferForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<TransferSchemaType>({
     resolver: zodResolver(transferSchema),
   });
 
   const [estoques, setEstoques] = useState<Estoque[]>([]);
-  const [equipamentos, setEquipamentos] = useState<{ id: number; nome: string }[]>([]);
-
+  const [itensDisponiveis, setItensDisponiveis] = useState<Equipamento[]>([]);
+  const [estoqueOrigemId, setEstoqueOrigemId] = useState<number | null>(null);
+  const [quantidadeDisponivel, setQuantidadeDisponivel] = useState<number | null>(null);
+  const selectedItemId = watch("itemId");
 
   useEffect(() => {
     async function fetchEstoques() {
@@ -37,18 +45,51 @@ export default function TransferForm() {
     fetchEstoques();
   }, []);
 
+  async function fetchItensDoEstoque(estoqueId: number) {
+    try {
+      const res = await api.get(`/stock/visualizar/${estoqueId}/itens`);
+
+      const itensConvertidos = res.data.map((registro: any) => ({
+        id: registro.item.id,
+        nome: registro.item.nome,
+      }));
+
+      setItensDisponiveis(itensConvertidos);
+    } catch (error) {
+      console.error('Erro ao buscar itens do estoque', error);
+    }
+  }
+
+  const handleChangeOrigem = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = parseInt(e.target.value);
+    console.log("Estoque selecionado:", id)
+    if (!isNaN(id)) {
+      setEstoqueOrigemId(id);
+      fetchItensDoEstoque(id);
+    } else {
+      setEstoqueOrigemId(null);
+      setItensDisponiveis([]);
+    }
+  };
+
   useEffect(() => {
-    async function fetchEquipamentos(){
+    async function fetchQuantidadeDisponivel() {
+      if (!selectedItemId || !estoqueOrigemId) {
+        setQuantidadeDisponivel(null);
+        return;
+      }
+
       try {
-        const res = await api.get('/equipment/visualizar');
-        setEquipamentos(res.data)
+        const res = await api.get(`/stockmovi/visualizar/${estoqueOrigemId}/itens-quantidade/${selectedItemId}`);
+        setQuantidadeDisponivel(res.data.quantidade || 0);
       } catch (error) {
-        console.error('Erro ao buscar equipamentos', error)
+        console.error("Erro ao buscar quantidade do item", error);
+        setQuantidadeDisponivel(null);
       }
     }
 
-    fetchEquipamentos();
-  }, []);
+    fetchQuantidadeDisponivel();
+  }, [selectedItemId, estoqueOrigemId]);
 
   const onSubmit = async (data: TransferSchemaType) => {
     try {
@@ -61,69 +102,108 @@ export default function TransferForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto space-y-6 bg-white p-6 shadow-md rounded-lg">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-md mx-auto space-y-6 bg-white p-6 shadow-md rounded-lg"
+    >
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Equipamento</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Estoque de Origem
+        </label>
+        <select
+          {...register('estoqueOrigemId', { valueAsNumber: true })}
+          onChange={handleChangeOrigem}
+          className="w-full border border-gray-300 rounded-md p-2 text-gray-900"
+        >
+          <option value="">Selecione</option>
+          {estoques.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.nome}
+            </option>
+          ))}
+        </select>
+        {errors.estoqueOrigemId && (
+          <p className="text-sm text-red-500 mt-1">
+            {errors.estoqueOrigemId.message}
+          </p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Equipamento
+        </label>
         <select
           {...register('itemId', { valueAsNumber: true })}
-          className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+          disabled={!estoqueOrigemId}
+          className="w-full border border-gray-300 rounded-md p-2 text-gray-900"
         >
           <option value="">Selecione um equipamento</option>
-          {equipamentos.map((equipamento) => (
-            <option key={equipamento.id} value={equipamento.id}>
-              {equipamento.nome}
+          {itensDisponiveis.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.nome}
             </option>
           ))}
         </select>
-        {errors.itemId && <p className="text-sm text-red-500 mt-1">{errors.itemId.message}</p>}
+        {errors.itemId && (
+          <p className="text-sm text-red-500 mt-1">
+            {errors.itemId.message}
+          </p>
+        )}
       </div>
 
-
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Estoque de Origem</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Estoque de Destino
+        </label>
         <select
-          {...register('estoqueOrigemId')}
+          {...register('estoqueDestinoId', { valueAsNumber: true })}
+          disabled={!estoqueOrigemId}
           className="w-full border border-gray-300 rounded-md p-2 text-gray-900"
         >
           <option value="">Selecione</option>
-          {estoques.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.nome}
-            </option>
-          ))}
+          {estoques
+            .filter((e) => e.id !== estoqueOrigemId)
+            .map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.nome}
+              </option>
+            ))}
         </select>
-        {errors.estoqueOrigemId && <p className="text-sm text-red-500 mt-1">{errors.estoqueOrigemId.message}</p>}
+        {errors.estoqueDestinoId && (
+          <p className="text-sm text-red-500 mt-1">
+            {errors.estoqueDestinoId.message}
+          </p>
+        )}
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Estoque de Destino</label>
-        <select
-          {...register('estoqueDestinoId')}
-          className="w-full border border-gray-300 rounded-md p-2 text-gray-900"
-        >
-          <option value="">Selecione</option>
-          {estoques.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.nome}
-            </option>
-          ))}
-        </select>
-        {errors.estoqueDestinoId && <p className="text-sm text-red-500 mt-1">{errors.estoqueDestinoId.message}</p>}
-      </div>
+      {quantidadeDisponivel !== null && (
+        <div className='text-sm text-gray-600 dark:text-gray-300'>
+          Quantidade disponível: <strong>{quantidadeDisponivel}</strong>
+        </div>
+      )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Quantidade</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Quantidade
+        </label>
         <input
           type="number"
-          {...register('quantidade')}
-          className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+          {...register('quantidade', { valueAsNumber: true })}
+          disabled={!estoqueOrigemId}
+          className="w-full border border-gray-300 rounded-md p-2 text-gray-900"
         />
-        {errors.quantidade && <p className="text-sm text-red-500 mt-1">{errors.quantidade.message}</p>}
+        {errors.quantidade && (
+          <p className="text-sm text-red-500 mt-1">
+            {errors.quantidade.message}
+          </p>
+        )}
       </div>
 
       <button
         type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors"
+        disabled={!estoqueOrigemId}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors disabled:opacity-50"
       >
         Transferir
       </button>
