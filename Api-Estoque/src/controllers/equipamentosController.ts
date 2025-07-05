@@ -6,7 +6,10 @@ import { prisma } from '../lib/prisma';
 type Body = Static<typeof EquipamentoBodySchema>;
 type Params = Static<typeof EquipamentoParamsSchema>;
 
-export async function cadastrarEquipamento(req: FastifyRequest<{ Body: Body }>, reply: FastifyReply) {
+export async function cadastrarEquipamento(
+  req: FastifyRequest<{ Body: Body }>,
+  reply: FastifyReply
+) {
   try {
     const { nome, quantidade, data } = req.body;
 
@@ -18,12 +21,17 @@ export async function cadastrarEquipamento(req: FastifyRequest<{ Body: Body }>, 
       },
     });
 
-    reply.send(novoEquipamento);
+    reply.send({
+      id: novoEquipamento.id,
+      nome: novoEquipamento.nome,
+      quantidade: novoEquipamento.quantidade,
+    });
   } catch (error) {
-    reply.status(500).send({ error: 'Erro ao cadastrar equipamento' });
     console.error(error);
+    reply.status(500).send({ error: 'Erro ao cadastrar equipamento' });
   }
 }
+
 
 export async function visualizarEquipamentos(_: FastifyRequest, reply: FastifyReply) {
   try {

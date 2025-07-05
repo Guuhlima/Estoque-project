@@ -3,31 +3,83 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { itemSchema, ItemFormData } from './schema';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Controller } from "react-hook-form";
 import { Card, CardContent } from '@/components/ui/card';
 import api from '@/services/api';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
+interface Estoque {
+  id: number;
+  nome: string;
+}
+
 const FormCreateItem = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [estoques, setEstoques] = useState<Estoque[]>([]);
   const MySwal = withReactContent(Swal);
 
   const {
     register,
     handleSubmit,
+    watch,
     reset,
+    control,
     formState: { errors },
   } = useForm<ItemFormData>({
-    resolver: zodResolver(itemSchema),
+    resolver: zodResolver(itemSchema) as any,
   });
+
+
+  const vincularEstoque = watch('vincularEstoque');
+
+  useEffect(() => {
+    async function fetchEstoques() {
+      try {
+        const res = await api.get('/stock/visualizar');
+        setEstoques(res.data);
+      } catch (error) {
+        console.error('Erro ao buscar estoques:', error);
+      }
+    }
+
+    fetchEstoques();
+  }, []);
 
   const onSubmit = async (data: ItemFormData) => {
     try {
-      await api.post('/equipment/cadastro', data);
+      const res = await api.post('/equipment/cadastro', {
+        nome: data.nome,
+        quantidade: data.quantidade,
+        data: data.data,
+      });
+
+      const itemId = res?.data?.id;
+      const estoqueId = data.estoqueId;
+      const quantidade = data.quantidade;
+
+      if (data.vincularEstoque && estoqueId && itemId && quantidade > 0) {
+        try {
+          await api.post(`/stockmovi/cadastro/${estoqueId}/adicionar-equipamento`, {
+            itemId,
+            quantidade,
+          });
+        } catch (err) {
+          console.error('Erro ao vincular ao estoque:', err);
+          MySwal.fire({
+            icon: 'error',
+            title: 'Erro ao vincular',
+            text: 'O equipamento foi criado, mas não foi vinculado ao estoque.',
+          });
+          return;
+        }
+      }
 
       MySwal.fire({
         icon: 'success',
@@ -79,7 +131,11 @@ const FormCreateItem = () => {
 
               <div>
                 <label className="block text-sm font-medium mb-1">Quantidade</label>
-                <Input type="number" {...register('quantidade')} placeholder="Ex: 10" />
+                <Input
+                  type="number"
+                  {...register('quantidade', { valueAsNumber: true })}
+                  placeholder="Ex: 10"
+                />
                 {errors.quantidade && (
                   <p className="text-red-500 text-sm mt-1">{errors.quantidade.message}</p>
                 )}
@@ -92,6 +148,43 @@ const FormCreateItem = () => {
                   <p className="text-red-500 text-sm mt-1">{errors.data.message}</p>
                 )}
               </div>
+
+              <div className="flex items-center justify-between">
+                <Label htmlFor="vincularEstoque" className="text-sm font-medium">
+                  Vincular a um estoque
+                </Label>
+                <Controller
+                  name="vincularEstoque"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      id="vincularEstoque"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
+              </div>
+
+              {vincularEstoque && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">Estoque</label>
+                  <select
+                    {...register('estoqueId', { valueAsNumber: true })}
+                    className="w-full border border-input rounded-md px-3 py-2 mt-1 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                  >
+                    <option value="">Selecione um estoque</option>
+                    {estoques.map((estoque) => (
+                      <option key={estoque.id} value={estoque.id}>
+                        {estoque.nome}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.estoqueId && (
+                    <p className="text-red-500 text-sm mt-1">{errors.estoqueId.message}</p>
+                  )}
+                </div>
+              )}
 
               <Button type="submit" className="w-full text-base">
                 Cadastrar
