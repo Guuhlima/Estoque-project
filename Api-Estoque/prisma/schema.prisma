@@ -14,6 +14,8 @@ model Usuario {
   matricula Int?
   senha     String? @db.VarChar(255)
 
+  permissoes UsuarioPermissao[]
+
   @@map("usuarios")
 }
 
@@ -65,4 +67,24 @@ model EstoqueItem {
 
   @@unique([itemId, estoqueId], name: "itemId_estoqueId")
   @@map("estoque_itens")
+}
+
+model Permissao {
+  id        Int @id @default(autoincrement())
+  nome      String @unique @db.VarChar(50)
+  usuarios  UsuarioPermissao[]
+
+  @@map("permissoes")
+}
+
+model UsuarioPermissao {
+  usuarioId     Int
+  permissaoId   Int
+
+  
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  permissao   Permissao @relation(fields: [permissaoId], references: [id], onDelete: Cascade)
+
+  @@id([usuarioId, permissaoId])
+  @@map("usuarios_permissoes")
 }

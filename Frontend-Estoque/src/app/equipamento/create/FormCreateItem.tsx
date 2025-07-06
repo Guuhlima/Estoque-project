@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { itemSchema, ItemFormData } from './schema';
 import { useEffect, useState } from 'react';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../../components/Sidebar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from "@/components/ui/switch";
