@@ -18,8 +18,13 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await api.post('/user/login', { email, senha });
-      localStorage.setItem('auth', 'true');
+      const res = await api.post('/user/login', { email, senha});
+
+      const { token, user } = res.data
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
       router.push('/home');
     } catch (error) {
       console.error('Erro ao realizar login:', error);

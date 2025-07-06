@@ -3,6 +3,10 @@ import { UsuarioBodySchema, UsuarioParamsSchema, UsuarioLoginSchema } from '../s
 import { Static } from '@sinclair/typebox';
 import { prisma } from '../lib/prisma';
 import bcrypt from 'bcrypt';
+import jwt, { SignOptions } from 'jsonwebtoken';
+import type { StringValue } from 'ms';
+import dotenv from 'dotenv';
+dotenv.config();
 
 type Body = Static<typeof UsuarioBodySchema>;
 type Params = Static<typeof UsuarioParamsSchema>;
@@ -39,6 +43,13 @@ export async function login(req: FastifyRequest<{ Body: Static<typeof UsuarioLog
 
     const user = await prisma.usuario.findUnique({
       where: { email },
+      include: {
+        permissoes: {
+          include: {
+            permissao: true,
+          },
+        },
+      },
     });
 
     if (!user || !user.senha) {
@@ -51,10 +62,36 @@ export async function login(req: FastifyRequest<{ Body: Static<typeof UsuarioLog
       return reply.status(401).send({ error: 'Senha incorreta' });
     }
 
-    reply.send('Login realizado com sucesso');
+    const permissoes = user.permissoes.map(p => p.permissao.nome);
+
+    const payload = {
+      id: user.id,
+      nome: user.nome,
+      email: user.email,
+      permissoes,
+    };
+
+    const jwtSecret = process.env.JWT_SECRET;
+    const jwtExpiresIn = (process.env.JWT_EXPIRES_IN || '24h') as StringValue;
+
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET não está definida nas variáveis de ambiente');
+    }
+
+    const signOptions: SignOptions = {
+      expiresIn: jwtExpiresIn,
+    };
+
+    const token = jwt.sign(payload, jwtSecret, signOptions);
+
+    reply.send({
+      message: 'Login realizado com sucesso',
+      token,
+      user: payload,
+    });
   } catch (error) {
-    reply.status(500).send({ error: 'Erro ao realizar login' });
     console.error(error);
+    reply.status(500).send({ error: 'Erro ao realizar login' });
   }
 }
 

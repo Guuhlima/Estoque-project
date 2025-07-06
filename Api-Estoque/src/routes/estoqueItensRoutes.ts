@@ -1,25 +1,42 @@
 import { FastifyInstance } from 'fastify';
-import { adicionarItemAoEstoque, visualizarItensDoEstoque, visualizarQuantidadePorItemNoEstoque } from '../controllers/estoqueItensController'
-import { EstoqueItemBodySchema, EstoqueItemParamsSchema, EstoqueItemQuantidadeParamsSchema} from '../schemas/estoqueItensSchemas';
+import {
+  adicionarItemAoEstoque,
+  visualizarItensDoEstoque,
+  visualizarQuantidadePorItemNoEstoque
+} from '../controllers/estoqueItensController';
+
+import {
+  EstoqueItemBodySchema,
+  EstoqueItemParamsSchema,
+  EstoqueItemQuantidadeParamsSchema
+} from '../schemas/estoqueItensSchemas';
+
+import { verifyToken } from '../middlewares/verifyToken';
+import { requirePermissionExcluding } from '../middlewares/requirePermissionExcluding';
 
 export async function estoqueItensRoutes(app: FastifyInstance) {
-    app.post('/stockmovi/cadastro/:id/adicionar-equipamento', {
-        schema: {
-            params: EstoqueItemParamsSchema,
-            body: EstoqueItemBodySchema
-        },
-        handler: adicionarItemAoEstoque
+  app.register(async (movRoutes) => {
+    movRoutes.addHook('preHandler', verifyToken);
+    movRoutes.addHook('preHandler', requirePermissionExcluding(['USER-EQUIPAMENTOS']));
+
+    movRoutes.post('/stockmovi/cadastro/:id/adicionar-equipamento', {
+      schema: {
+        params: EstoqueItemParamsSchema,
+        body: EstoqueItemBodySchema,
+      },
+      handler: adicionarItemAoEstoque,
     });
 
-    app.get('/stockmovi/visualizar/:id/itens', {
-        schema: {
-            params: EstoqueItemParamsSchema,
-        },
-        handler: visualizarItensDoEstoque
-    })
-
-    app.get('/stockmovi/visualizar/:estoqueId/itens-quantidade/:itemId', {
-        schema: { params: EstoqueItemQuantidadeParamsSchema },
-        handler: visualizarQuantidadePorItemNoEstoque,
+    movRoutes.get('/stockmovi/visualizar/:id/itens', {
+      schema: {
+        params: EstoqueItemParamsSchema,
+      },
+      handler: visualizarItensDoEstoque,
     });
+
+    movRoutes.get('/stockmovi/visualizar/:estoqueId/itens-quantidade/:itemId', {
+      schema: { params: EstoqueItemQuantidadeParamsSchema },
+      handler: visualizarQuantidadePorItemNoEstoque,
+    });
+  });
 }

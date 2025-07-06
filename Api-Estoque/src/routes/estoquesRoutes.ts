@@ -1,19 +1,47 @@
 import { FastifyInstance } from 'fastify';
 import {
-    cadastrarEstoque,
-    visualizarEstoque,
-    visualizarEstoquePorId,
-    editarEstoque,
-    deletarEstoque,
-    visualizarItensPorEstoque
+  cadastrarEstoque,
+  visualizarEstoque,
+  visualizarEstoquePorId,
+  editarEstoque,
+  deletarEstoque,
+  visualizarItensPorEstoque
 } from '../controllers/estoquesController';
+
 import { EstoqueBodySchema, EstoqueParamsSchema } from '../schemas/estoquesSchemas';
+import { verifyToken } from '../middlewares/verifyToken';
+import { requirePermissionExcluding } from '../middlewares/requirePermissionExcluding';
 
 export async function estoquesRoutes(app: FastifyInstance) {
-    app.post('/stock/cadastro', { schema: { body: EstoqueBodySchema }, handler: cadastrarEstoque });
-    app.get('/stock/visualizar', visualizarEstoque);
-    app.get('/stock/visualizar/:id', { schema: { params: EstoqueParamsSchema }, handler: visualizarEstoquePorId });
-    app.get('/stock/visualizar/:id/itens', { schema: { params: EstoqueParamsSchema }, handler: visualizarItensPorEstoque });
-    app.put('/stock/editar/:id', { schema: { params: EstoqueParamsSchema, body: EstoqueBodySchema }, handler: editarEstoque });
-    app.delete('/stock/deletar/:id', { schema: { params: EstoqueParamsSchema }, handler: deletarEstoque });
+  app.register(async (estoqueRoutes) => {
+    estoqueRoutes.addHook('preHandler', verifyToken);
+    estoqueRoutes.addHook('preHandler', requirePermissionExcluding(['USER-EQUIPAMENTOS']));
+
+    estoqueRoutes.post('/stock/cadastro', {
+      schema: { body: EstoqueBodySchema },
+      handler: cadastrarEstoque,
+    });
+
+    estoqueRoutes.get('/stock/visualizar', visualizarEstoque);
+
+    estoqueRoutes.get('/stock/visualizar/:id', {
+      schema: { params: EstoqueParamsSchema },
+      handler: visualizarEstoquePorId,
+    });
+
+    estoqueRoutes.get('/stock/visualizar/:id/itens', {
+      schema: { params: EstoqueParamsSchema },
+      handler: visualizarItensPorEstoque,
+    });
+
+    estoqueRoutes.put('/stock/editar/:id', {
+      schema: { params: EstoqueParamsSchema, body: EstoqueBodySchema },
+      handler: editarEstoque,
+    });
+
+    estoqueRoutes.delete('/stock/deletar/:id', {
+      schema: { params: EstoqueParamsSchema },
+      handler: deletarEstoque,
+    });
+  });
 }

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import DarkModeToggle from './DarkModeToggle';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SidebarProps {
   onLogout: (e: React.MouseEvent) => void;
@@ -32,6 +33,7 @@ const Sidebar = ({ onLogout, collapsed, onToggle }: SidebarProps) => {
   const pathname = usePathname();
   const [openEquipamento, setOpenEquipamento] = useState(false);
   const [openGestao, setOpenGestao] = useState(false);
+  const { hasPermission } = useAuth();
 
   return (
     <aside
@@ -90,38 +92,45 @@ const Sidebar = ({ onLogout, collapsed, onToggle }: SidebarProps) => {
             </Link>
           </div>
         )}
-
-        <Link href="/transfer" className={navItem(pathname, '/transfer')}>
-          <Repeat className="w-4 h-4" />
-          {!collapsed && 'Transferência'}
-        </Link>
-
-        <button
-          onClick={() => setOpenGestao(!openGestao)}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all ${
-            pathname.startsWith('/gestao')
-              ? 'bg-blue-100 dark:bg-zinc-800 text-blue-500'
-              : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          {!collapsed && <span className="flex-1 text-left">Gestão</span>}
-          {!collapsed &&
-            (openGestao ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />)}
-        </button>
-
-        {!collapsed && openGestao && (
-          <div className="ml-6 space-y-1">
-            <Link href="/gestao/usuarios" className={navItem(pathname, '/gestao/usuarios')}>
-              <UserPlus className="w-4 h-4" />
-              Usuários
-            </Link>
-            <Link href="/gestao/permissoes" className={navItem(pathname, '/gestao/permissoes')}>
-              <Shield className="w-4 h-4" />
-              Permissões
-            </Link>
-          </div>
+        
+        {hasPermission(['ADMIN', 'SUPER-ADMIN', 'USER-EQUIP-TRANSFER']) && (
+          <Link href="/transfer" className={navItem(pathname, '/transfer')}>
+            <Repeat className="w-4 h-4" />
+            {!collapsed && 'Transferência'}
+         </Link>
         )}
+
+        {hasPermission(['ADMIN', 'SUPER-ADMIN']) && (
+          <>
+            <button
+              onClick={() => setOpenGestao(!openGestao)}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all ${
+                pathname.startsWith('/gestao')
+                  ? 'bg-blue-100 dark:bg-zinc-800 text-blue-500'
+                  : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              {!collapsed && <span className="flex-1 text-left">Gestão</span>}
+              {!collapsed &&
+                (openGestao ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />)}
+            </button>
+
+            {!collapsed && openGestao && (
+              <div className="ml-6 space-y-1">
+                <Link href="/gestao/usuarios" className={navItem(pathname, '/gestao/usuarios')}>
+                  <UserPlus className="w-4 h-4" />
+                  Usuários
+                </Link>
+                <Link href="/gestao/permissoes" className={navItem(pathname, '/gestao/permissoes')}>
+                  <Shield className="w-4 h-4" />
+                  Permissões
+                </Link>
+              </div>
+            )}
+          </>
+        )}
+
       </nav>
 
       <div className="px-4 py-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-col gap-3">

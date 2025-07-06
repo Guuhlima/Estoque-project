@@ -1,27 +1,38 @@
 import { FastifyInstance } from 'fastify';
 import {
-    realizarTransferencia,
-    visualizarTransferencias,
-    visualizarTransferenciaPorId,
-    deletarTransferencia
+  realizarTransferencia,
+  visualizarTransferencias,
+  visualizarTransferenciaPorId,
+  deletarTransferencia,
 } from '../controllers/transferenciasController';
+
 import { TransferenciaBodySchema, TransferenciaParamsSchema } from '../schemas/transferenciasSchema';
+import { verifyToken } from '../middlewares/verifyToken';
+import { requirePermissionExcluding } from '../middlewares/requirePermissionExcluding';
 
 export async function transferenciasRoutes(app: FastifyInstance) {
-    app.post('/transfer/cadastro', {
-        schema: { body: TransferenciaBodySchema },
-        handler: realizarTransferencia
+  app.register(async (transferRoutes) => {
+    transferRoutes.addHook('preHandler', verifyToken);
+    transferRoutes.addHook(
+      'preHandler',
+      requirePermissionExcluding(['USER-EQUIP-TRANSFER', 'ADMIN'])
+    );
+
+    transferRoutes.post('/transfer/cadastro', {
+      schema: { body: TransferenciaBodySchema },
+      handler: realizarTransferencia,
     });
 
-    app.get('/transfer/visualizar', visualizarTransferencias);
+    transferRoutes.get('/transfer/visualizar', visualizarTransferencias);
 
-    app.get('/transfer/visualizar/:id', {
-        schema: { params: TransferenciaParamsSchema },
-        handler: visualizarTransferenciaPorId
+    transferRoutes.get('/transfer/visualizar/:id', {
+      schema: { params: TransferenciaParamsSchema },
+      handler: visualizarTransferenciaPorId,
     });
 
-    app.delete('/transfer/deletar/:id', {
-        schema: { params: TransferenciaParamsSchema },
-        handler: deletarTransferencia
+    transferRoutes.delete('/transfer/deletar/:id', {
+      schema: { params: TransferenciaParamsSchema },
+      handler: deletarTransferencia,
     });
+  });
 }

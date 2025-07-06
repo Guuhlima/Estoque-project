@@ -14,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import api from '@/services/api';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Estoque {
   id: number;
@@ -24,6 +25,7 @@ const FormCreateItem = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [estoques, setEstoques] = useState<Estoque[]>([]);
   const MySwal = withReactContent(Swal);
+  const { hasPermission } = useAuth();
 
   const {
     register,
@@ -41,6 +43,9 @@ const FormCreateItem = () => {
 
   useEffect(() => {
     async function fetchEstoques() {
+
+      if (!hasPermission(['ADMIN', 'SUPER-ADMIN', 'USER-EQUIP-TRANSFER'])) return;
+
       try {
         const res = await api.get('/stock/visualizar');
         setEstoques(res.data);
@@ -50,7 +55,7 @@ const FormCreateItem = () => {
     }
 
     fetchEstoques();
-  }, []);
+  }, [hasPermission]);
 
   const onSubmit = async (data: ItemFormData) => {
     try {
@@ -149,41 +154,45 @@ const FormCreateItem = () => {
                 )}
               </div>
 
-              <div className="flex items-center justify-between">
-                <Label htmlFor="vincularEstoque" className="text-sm font-medium">
-                  Vincular a um estoque
-                </Label>
-                <Controller
-                  name="vincularEstoque"
-                  control={control}
-                  render={({ field }) => (
-                    <Switch
-                      id="vincularEstoque"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+              {hasPermission(['ADMIN', 'SUPER-ADMIN', 'USER-EQUIP-TRANSFER']) && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="vincularEstoque" className="text-sm font-medium">
+                      Vincular a um estoque
+                    </Label>
+                    <Controller
+                      name="vincularEstoque"
+                      control={control}
+                      render={({ field }) => (
+                        <Switch
+                          id="vincularEstoque"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      )}
                     />
-                  )}
-                />
-              </div>
+                  </div>
 
-              {vincularEstoque && (
-                <div>
-                  <label className="block text-sm font-medium mb-1">Estoque</label>
-                  <select
-                    {...register('estoqueId', { valueAsNumber: true })}
-                    className="w-full border border-input rounded-md px-3 py-2 mt-1 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                  >
-                    <option value="">Selecione um estoque</option>
-                    {estoques.map((estoque) => (
-                      <option key={estoque.id} value={estoque.id}>
-                        {estoque.nome}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.estoqueId && (
-                    <p className="text-red-500 text-sm mt-1">{errors.estoqueId.message}</p>
+                  {vincularEstoque && (
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Estoque</label>
+                      <select
+                        {...register('estoqueId', { valueAsNumber: true })}
+                        className="w-full border border-input rounded-md px-3 py-2 mt-1 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                      >
+                        <option value="">Selecione um estoque</option>
+                        {estoques.map((estoque) => (
+                          <option key={estoque.id} value={estoque.id}>
+                            {estoque.nome}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.estoqueId && (
+                        <p className="text-red-500 text-sm mt-1">{errors.estoqueId.message}</p>
+                      )}
+                    </div>
                   )}
-                </div>
+                </>
               )}
 
               <Button type="submit" className="w-full text-base">
