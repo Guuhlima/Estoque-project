@@ -97,8 +97,22 @@ export async function login(req: FastifyRequest<{ Body: Static<typeof UsuarioLog
 
 export async function visualizarUsuarios(_: FastifyRequest, reply: FastifyReply) {
   try {
-    const usuarios = await prisma.usuario.findMany();
-    reply.send(usuarios);
+    const usuarios = await prisma.usuario.findMany({
+      include: {
+        permissoes: {
+          include: {
+            permissao: true,
+          },
+        },
+      },
+    });
+
+    const usuariosComPermissoes = usuarios.map((user) => ({
+      ...user,
+      permissoes: user.permissoes.map((p) => p.permissao.nome),
+    }));
+
+    reply.send(usuariosComPermissoes);
   } catch (error) {
     reply.status(500).send({ error: 'Erro ao consultar usuários' });
     console.error(error);
